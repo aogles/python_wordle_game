@@ -1,85 +1,39 @@
 
-from random import choice
+# ANSI COLORS
+# https://www.cyberciti.biz/faq/apple-mac-osx-terminal-color-ls-output-option/
 
-words_bank = ['FEYRE', 'DARLING', 'RHYSAND',
-              'AZRIEL', 'CASSIAN', 'TAMPON', 'LUCIEN', 'COURT']
+# IMPORT REAUIRED FOR RANDOM CHOICE
+import os
+import random
+os.system("clear")
+# COLORS
+BG_GREEN = "\u001b[42m"
+BG_YELLOW = "\u001b[43m"
+RESET = "\u001b[0m"
 
-SQUARES = {
-    'correct_place': '🟩',
-    'correct_letter': '🟨',
-    'incorrect_letter': '⬛'
-}
+print("LETS PLAY WORDLE")
+# word bank for game, all 5 letter words
+correct = random.choice(["PAINT", "FEYRE", "ROSES", "COURT", "WINGS"])
+# You get six chances to guess
+for _ in range(6):
+    guess = input("Please guess. > ").upper()
 
-WELCOME_MESSAGE = f'\n WELCOME TO WORDLE \n'
-
-player_instructions = "Start guessing \n"
-input_guess = "Enter your guess"
-tries = 6
-
-chosen_word = choice(words_bank)
-print(WELCOME_MESSAGE)
-print(player_instructions)
-print(tries)
-
-
-def correct_place(letter):
-    return f'[black on green]{letter}[/]'
-
-
-def correct_letter(letter):
-    return f'[black on yellow]{letter}[/]'
-
-
-def incorrect_letter(letter):
-    return f'[black on white]{letter}[/]'
-
-
-def check_guess(guess, answer):
-    guessed = []
-    wordle_pattern = []
-    for i, letter in enumerate(guess):
-        if answer[i] == guess[i]:
-            guessed += correct_place(letter)
-            wordle_pattern.append(SQUARES['correct_place'])
-        elif letter in answer:
-            guessed += correct_letter(letter)
-            wordle_pattern.append(SQUARES['correct_letter'])
+    # Check each letter, will only work with 5 letters
+    # will print green background color for letter depending on corect placement
+    for i in range(0, 5):
+        if guess[i] == correct[i]:
+            print(f"{BG_GREEN}{guess[i]}{RESET}", end="")
+        elif guess[i] in correct:
+            print(f"{BG_YELLOW}{guess[i]}{RESET}", end="")
         else:
-            guessed += incorrect_letter(letter)
-            wordle_pattern.append(SQUARES['incorrect_letter'])
-    return ''.join(guessed), ''.join(wordle_pattern)
+            print(guess[i], end="")
 
+    print()
 
-def game(chosen_word):
-    end_of_game = False
-    already_guessed = []
-    full_wordle_pattern = []
-    all_words_guessed = []
+    # Check if the guess is correct
+    if guess == correct:
+        print("You won wordle!")
+        exit()
 
-    while not end_of_game:
-        guess = (input_guess).upper()
-        while len(guess) != 5 or guess in already_guessed:
-            if guess in already_guessed:
-                print("[red]You've already guessed this word!!\n[/]")
-            else:
-                print('[red]Please enter a 5-letter word!!\n[/]')
-            guess = (input_guess).upper()
-        already_guessed.append(guess)
-        guessed, pattern = check_guess(guess, chosen_word)
-        all_words_guessed.append(guessed)
-        full_wordle_pattern.append(pattern)
-
-        print(*all_words_guessed, sep="\n")
-        if guess == chosen_word or len(already_guessed) == tries:
-            end_of_game = True
-    if len(already_guessed) == tries and guess != chosen_word:
-        print(f"\n[red]WORDLE X/{tries}[/]")
-        print(f'\n[green]Correct Word: {chosen_word}[/]')
-    else:
-        print(
-            f"\n[green]WORDLE {len(already_guessed)}/{tries}[/]\n")
-        print(*full_wordle_pattern, sep="\n")
-
-
-if __name__ == '__main__':
-    chosen_word = choice(words_bank)
+print("You lose!")
+print(f"The correct word was {correct}.")
